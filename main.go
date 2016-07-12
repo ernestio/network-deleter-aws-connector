@@ -5,15 +5,68 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"runtime"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/nats-io/nats"
 )
 
 var nc *nats.Conn
 var natsErr error
+
+func processEvent(data []byte) (*Event, error) {
+	var ev Event
+	err := json.Unmarshal(data, &ev)
+	return &ev, err
+}
+
+func eventHandler(m *nats.Msg) {
+	n, err := processEvent(m.Data)
+	if err != nil {
+		nc.Publish("network.delete.aws.error", m.Data)
+		return
+	}
+
+	if n.Valid() == false {
+		n.Error(errors.New("Network is invalid"))
+		return
+	}
+
+	err = deleteNetwork(n)
+	if err != nil {
+		n.Error(err)
+		return
+	}
+
+	n.Complete()
+}
+
+func deleteNetwork(ev *Event) error {
+	creds := credentials.NewStaticCredentials(ev.DatacenterAccessKey, ev.DatacenterAccessToken, "")
+	svc := ec2.New(session.New(), &aws.Config{
+		Region:      aws.String(ev.DatacenterRegion),
+		Credentials: creds,
+	})
+
+	req := ec2.DeleteSubnetInput{
+		SubnetId: aws.String(ev.NetworkAWSID),
+	}
+
+	_, err := svc.DeleteSubnet(&req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func main() {
 	natsURI := os.Getenv("NATS_URI")
@@ -26,11 +79,8 @@ func main() {
 		log.Fatal(natsErr)
 	}
 
-	nc.Subscribe("network.delete.aws", notImplemented)
+	fmt.Println("listening for network.create.aws")
+	nc.Subscribe("network.delete.aws", eventHandler)
 
 	runtime.Goexit()
-}
-
-func notImplemented(m *nats.Msg) {
-	nc.Publish("network.delete.aws.error", []byte(`{"error":"not implemented"}`))
 }
