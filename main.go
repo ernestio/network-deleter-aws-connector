@@ -25,7 +25,6 @@ func eventHandler(m *nats.Msg) {
 
 	err := n.Process(m.Data)
 	if err != nil {
-		nc.Publish("network.delete.aws.error", m.Data)
 		return
 	}
 

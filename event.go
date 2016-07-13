@@ -18,7 +18,7 @@ var (
 	ErrNetworkSubnetInvalid         = errors.New("Network subnet invalid")
 )
 
-// Event stores the network create data
+// Event stores the network data
 type Event struct {
 	ID                    string `json:"id"`
 	DatacenterVPCID       string `json:"datacenter_vpc_id"`
