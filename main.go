@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -21,14 +20,10 @@ import (
 var nc *nats.Conn
 var natsErr error
 
-func processEvent(data []byte) (*Event, error) {
-	var ev Event
-	err := json.Unmarshal(data, &ev)
-	return &ev, err
-}
-
 func eventHandler(m *nats.Msg) {
-	n, err := processEvent(m.Data)
+	var n Event
+
+	err := n.Process(m.Data)
 	if err != nil {
 		nc.Publish("network.delete.aws.error", m.Data)
 		return
@@ -39,7 +34,7 @@ func eventHandler(m *nats.Msg) {
 		return
 	}
 
-	err = deleteNetwork(n)
+	err = deleteNetwork(&n)
 	if err != nil {
 		n.Error(err)
 		return

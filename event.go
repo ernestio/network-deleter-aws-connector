@@ -14,6 +14,7 @@ var (
 	ErrDatacenterIDInvalid          = errors.New("Datacenter VPC ID invalid")
 	ErrDatacenterRegionInvalid      = errors.New("Datacenter Region invalid")
 	ErrDatacenterCredentialsInvalid = errors.New("Datacenter credentials invalid")
+	ErrNetworkAWSIDInvalid          = errors.New("Network aws id invalid")
 	ErrNetworkSubnetInvalid         = errors.New("Network subnet invalid")
 )
 
@@ -43,11 +44,24 @@ func (ev *Event) Validate() error {
 		return ErrDatacenterCredentialsInvalid
 	}
 
+	if ev.NetworkAWSID == "" {
+		return ErrNetworkAWSIDInvalid
+	}
+
 	if ev.NetworkSubnet == "" {
 		return ErrNetworkSubnetInvalid
 	}
 
 	return nil
+}
+
+// Process the raw event
+func (ev *Event) Process(data []byte) error {
+	err := json.Unmarshal(data, &ev)
+	if err != nil {
+		nc.Publish("network.delete.aws.error", data)
+	}
+	return err
 }
 
 // Error the request
