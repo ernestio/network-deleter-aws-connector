@@ -6,7 +6,15 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
+)
+
+var (
+	ErrDatacenterIDInvalid          = errors.New("Datacenter VPC ID invalid")
+	ErrDatacenterRegionInvalid      = errors.New("Datacenter Region invalid")
+	ErrDatacenterCredentialsInvalid = errors.New("Datacenter credentials invalid")
+	ErrNetworkSubnetInvalid         = errors.New("Network subnet invalid")
 )
 
 // Event stores the network create data
@@ -21,9 +29,25 @@ type Event struct {
 	ErrorMessage          string `json:"error,omitempty"`
 }
 
-// Valid checks if all criteria are met
-func (ev *Event) Valid() bool {
-	return true
+// Validate checks if all criteria are met
+func (ev *Event) Validate() error {
+	if ev.DatacenterVPCID == "" {
+		return ErrDatacenterIDInvalid
+	}
+
+	if ev.DatacenterRegion == "" {
+		return ErrDatacenterRegionInvalid
+	}
+
+	if ev.DatacenterAccessKey == "" || ev.DatacenterAccessToken == "" {
+		return ErrDatacenterCredentialsInvalid
+	}
+
+	if ev.NetworkSubnet == "" {
+		return ErrNetworkSubnetInvalid
+	}
+
+	return nil
 }
 
 // Error the request

@@ -6,7 +6,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -35,8 +34,8 @@ func eventHandler(m *nats.Msg) {
 		return
 	}
 
-	if n.Valid() == false {
-		n.Error(errors.New("Network is invalid"))
+	if err = n.Validate(); err != nil {
+		n.Error(err)
 		return
 	}
 
@@ -79,7 +78,7 @@ func main() {
 		log.Fatal(natsErr)
 	}
 
-	fmt.Println("listening for network.create.aws")
+	fmt.Println("listening for network.delete.aws")
 	nc.Subscribe("network.delete.aws", eventHandler)
 
 	runtime.Goexit()
