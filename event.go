@@ -24,8 +24,8 @@ type Event struct {
 	BatchID               string `json:"_batch_id"`
 	ProviderType          string `json:"_type"`
 	DatacenterRegion      string `json:"datacenter_region"`
-	DatacenterAccessKey   string `json:"datacenter_access_key"`
-	DatacenterAccessToken string `json:"datacenter_access_token"`
+	DatacenterAccessKey   string `json:"datacenter_secret"`
+	DatacenterAccessToken string `json:"datacenter_token"`
 	VPCID                 string `json:"vpc_id"`
 	NetworkAWSID          string `json:"network_aws_id,omitempty"`
 	Subnet                string `json:"subnet"`
