@@ -23,10 +23,10 @@ type Event struct {
 	UUID                  string `json:"_uuid"`
 	BatchID               string `json:"_batch_id"`
 	ProviderType          string `json:"_type"`
-	DatacenterVPCID       string `json:"datacenter_vpc_id"`
 	DatacenterRegion      string `json:"datacenter_region"`
 	DatacenterAccessKey   string `json:"datacenter_access_key"`
 	DatacenterAccessToken string `json:"datacenter_access_token"`
+	VPCID                 string `json:"vpc_id"`
 	NetworkAWSID          string `json:"network_aws_id,omitempty"`
 	Subnet                string `json:"subnet"`
 	ErrorMessage          string `json:"error_message,omitempty"`
@@ -34,7 +34,7 @@ type Event struct {
 
 // Validate checks if all criteria are met
 func (ev *Event) Validate() error {
-	if ev.DatacenterVPCID == "" {
+	if ev.VPCID == "" {
 		return ErrDatacenterIDInvalid
 	}
 
