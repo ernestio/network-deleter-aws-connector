@@ -29,7 +29,7 @@ type Event struct {
 	DatacenterAccessToken string `json:"datacenter_access_token"`
 	NetworkAWSID          string `json:"network_aws_id,omitempty"`
 	Subnet                string `json:"subnet"`
-	ErrorMessage          string `json:"error,omitempty"`
+	ErrorMessage          string `json:"error_message,omitempty"`
 }
 
 // Validate checks if all criteria are met
