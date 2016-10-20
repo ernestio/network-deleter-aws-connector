@@ -120,7 +120,7 @@ func TestEvent(t *testing.T) {
 				Convey("It should produce a network.delete.aws.error event", func() {
 					msg, timeout := waitMsg(errored)
 					So(msg, ShouldNotBeNil)
-					So(string(msg.Data), ShouldContainSubstring, `"error":"error"`)
+					So(string(msg.Data), ShouldContainSubstring, `"error_message":"error"`)
 					So(timeout, ShouldBeNil)
 					msg, timeout = waitMsg(completed)
 					So(msg, ShouldBeNil)
