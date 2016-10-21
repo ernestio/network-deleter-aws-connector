@@ -80,16 +80,18 @@ func deleteNetwork(ev *Event) error {
 		Credentials: creds,
 	})
 
-	req := ec2.DeleteSubnetInput{
-		SubnetId: aws.String(ev.NetworkAWSID),
-	}
-
-	_, err := svc.DeleteSubnet(&req)
+	err := waitForInterfaceRemoval(svc, ev.NetworkAWSID)
 	if err != nil {
 		return err
 	}
 
-	return waitForInterfaceRemoval(svc, ev.NetworkAWSID)
+	req := ec2.DeleteSubnetInput{
+		SubnetId: aws.String(ev.NetworkAWSID),
+	}
+
+	_, err = svc.DeleteSubnet(&req)
+
+	return err
 }
 
 func main() {
