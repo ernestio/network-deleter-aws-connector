@@ -28,7 +28,7 @@ type Event struct {
 	DatacenterAccessToken string `json:"datacenter_token"`
 	VPCID                 string `json:"vpc_id"`
 	NetworkAWSID          string `json:"network_aws_id,omitempty"`
-	Subnet                string `json:"subnet"`
+	Subnet                string `json:"range"`
 	ErrorMessage          string `json:"error_message,omitempty"`
 }
 
@@ -48,10 +48,6 @@ func (ev *Event) Validate() error {
 
 	if ev.NetworkAWSID == "" {
 		return ErrNetworkAWSIDInvalid
-	}
-
-	if ev.Subnet == "" {
-		return ErrNetworkSubnetInvalid
 	}
 
 	return nil
