@@ -210,21 +210,6 @@ func TestEvent(t *testing.T) {
 			})
 		})
 
-		Convey("With no network subnet", func() {
-			testEventInvalid := testEvent
-			testEventInvalid.Subnet = ""
-			invalid, _ := json.Marshal(testEventInvalid)
-
-			Convey("When validating the event", func() {
-				var e Event
-				e.Process(invalid)
-				err := e.Validate()
-				Convey("It should error", func() {
-					So(err, ShouldNotBeNil)
-					So(err.Error(), ShouldEqual, "Network subnet invalid")
-				})
-			})
-		})
 
 	})
 }
